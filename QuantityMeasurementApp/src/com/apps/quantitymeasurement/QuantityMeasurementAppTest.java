@@ -5,9 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.apps.quantitymeasurement.QuantityMeasurementApp.Length;
-import com.apps.quantitymeasurement.QuantityMeasurementApp.Length.LengthUnit;
-
 public class QuantityMeasurementAppTest {
 
     private static final double EPSILON = 1e-2;
