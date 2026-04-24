@@ -1,8 +1,8 @@
 /*
- * UC4: Extended Unit Support
+ * UC6: Addition of Two Length Units
  *
  * @author Mohith
- * @version 4.0
+ * @version 6.0
  */
 
 package com.apps.quantitymeasurement;
@@ -31,6 +31,33 @@ public class QuantityMeasurementApp {
             this.unit = unit;
         }
 
+        public double getValue() {
+            return this.value;
+        }
+
+        public LengthUnit getUnit() {
+            return this.unit;
+        }
+
+        public static double convert(double value, LengthUnit sourceUnit, LengthUnit targetUnit) {
+            if (!Double.isFinite(value)) {
+                throw new IllegalArgumentException("Value must be finite");
+            }
+            if (sourceUnit == null || targetUnit == null) {
+                throw new IllegalArgumentException("Units cannot be null");
+            }
+            double inInches = value * sourceUnit.conversionFactor;
+            return inInches / targetUnit.conversionFactor;
+        }
+
+        public Length add(Length other) {
+            if (other == null) {
+                throw new IllegalArgumentException("Cannot add null length");
+            }
+            double otherConverted = convert(other.value, other.unit, this.unit);
+            return new Length(this.value + otherConverted, this.unit);
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -49,14 +76,24 @@ public class QuantityMeasurementApp {
     }
 
     public static void main(String[] args) {
-        Length yard = new Length(1.0, Length.LengthUnit.YARDS);
-        Length feet = new Length(3.0, Length.LengthUnit.FEET);
-        Length inch = new Length(36.0, Length.LengthUnit.INCHES);
-        Length cm = new Length(2.54, Length.LengthUnit.CENTIMETERS);
-        Length inch1 = new Length(1.0, Length.LengthUnit.INCHES);
+        Length inch1 = new Length(2.0, Length.LengthUnit.INCHES);
+        Length inch2 = new Length(2.0, Length.LengthUnit.INCHES);
+        Length sum1 = inch1.add(inch2);
+        System.out.println("2 Inches + 2 Inches = " + sum1.getValue() + " " + sum1.getUnit());
 
-        System.out.println("1 Yard equals 3 Feet: " + yard.equals(feet));
-        System.out.println("1 Yard equals 36 Inches: " + yard.equals(inch));
-        System.out.println("2.54 Centimeters equals 1 Inch: " + cm.equals(inch1));
+        Length foot1 = new Length(1.0, Length.LengthUnit.FEET);
+        Length inch3 = new Length(2.0, Length.LengthUnit.INCHES);
+        Length sum2 = inch3.add(foot1);
+        System.out.println("2 Inches + 1 Foot = " + sum2.getValue() + " " + sum2.getUnit());
+
+        Length foot2 = new Length(1.0, Length.LengthUnit.FEET);
+        Length foot3 = new Length(1.0, Length.LengthUnit.FEET);
+        Length sum3 = foot2.add(foot3);
+        System.out.println("1 Foot + 1 Foot = " + sum3.getValue() + " " + sum3.getUnit());
+
+        Length inch4 = new Length(2.0, Length.LengthUnit.INCHES);
+        Length cm1 = new Length(2.54, Length.LengthUnit.CENTIMETERS);
+        Length sum4 = inch4.add(cm1);
+        System.out.println("2 Inches + 2.54 Centimeters = " + sum4.getValue() + " " + sum4.getUnit());
     }
 }
