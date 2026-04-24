@@ -1,19 +1,25 @@
 /*
- * UC2: Feet and Inches measurement equality
+ * UC3: Generic Quantity Class for DRY Principle
  *
  * @author Mohith
- * @version 2.0
+ * @version 3.0
  */
 
 package com.apps.quantitymeasurement;
 
 public class QuantityMeasurementApp {
 
-    public static class Feet {
-        private final double value;
+    public static class Length {
+        public enum LengthUnit {
+            FEET, INCHES
+        }
 
-        public Feet(double value) {
+        private final double value;
+        private final LengthUnit unit;
+
+        public Length(double value, LengthUnit unit) {
             this.value = value;
+            this.unit = unit;
         }
 
         @Override
@@ -24,48 +30,17 @@ public class QuantityMeasurementApp {
             if (obj == null || getClass() != obj.getClass()) {
                 return false;
             }
-            Feet feet = (Feet) obj;
-            return Double.compare(feet.value, this.value) == 0;
+            Length length = (Length) obj;
+            return Double.compare(length.value, this.value) == 0 && this.unit == length.unit;
         }
-    }
-
-    public static class Inches {
-        private final double value;
-
-        public Inches(double value) {
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null || getClass() != obj.getClass()) {
-                return false;
-            }
-            Inches inches = (Inches) obj;
-            return Double.compare(inches.value, this.value) == 0;
-        }
-    }
-
-    public static boolean compareFeet(double val1, double val2) {
-        Feet feet1 = new Feet(val1);
-        Feet feet2 = new Feet(val2);
-        return feet1.equals(feet2);
-    }
-
-    public static boolean compareInches(double val1, double val2) {
-        Inches inches1 = new Inches(val1);
-        Inches inches2 = new Inches(val2);
-        return inches1.equals(inches2);
     }
 
     public static void main(String[] args) {
-        System.out.println("Feet Equality (10.0, 10.0): " + compareFeet(10.0, 10.0));
-        System.out.println("Feet Equality (10.0, 12.0): " + compareFeet(10.0, 12.0));
+        Length feet1 = new Length(10.0, Length.LengthUnit.FEET);
+        Length feet2 = new Length(10.0, Length.LengthUnit.FEET);
+        Length inches1 = new Length(5.0, Length.LengthUnit.INCHES);
 
-        System.out.println("Inches Equality (5.0, 5.0): " + compareInches(5.0, 5.0));
-        System.out.println("Inches Equality (5.0, 7.0): " + compareInches(5.0, 7.0));
+        System.out.println("Feet Equality (10.0, 10.0): " + feet1.equals(feet2));
+        System.out.println("Different Units Equality: " + feet1.equals(inches1));
     }
 }
