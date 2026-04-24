@@ -1,8 +1,8 @@
 /*
- * UC4: Extended Unit Support
+ * UC5: Unit-to-Unit Conversion
  *
  * @author Mohith
- * @version 4.0
+ * @version 5.0
  */
 
 package com.apps.quantitymeasurement;
@@ -31,6 +31,17 @@ public class QuantityMeasurementApp {
             this.unit = unit;
         }
 
+        public static double convert(double value, LengthUnit sourceUnit, LengthUnit targetUnit) {
+            if (!Double.isFinite(value)) {
+                throw new IllegalArgumentException("Value must be finite");
+            }
+            if (sourceUnit == null || targetUnit == null) {
+                throw new IllegalArgumentException("Units cannot be null");
+            }
+            double inInches = value * sourceUnit.conversionFactor;
+            return inInches / targetUnit.conversionFactor;
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -49,14 +60,9 @@ public class QuantityMeasurementApp {
     }
 
     public static void main(String[] args) {
-        Length yard = new Length(1.0, Length.LengthUnit.YARDS);
-        Length feet = new Length(3.0, Length.LengthUnit.FEET);
-        Length inch = new Length(36.0, Length.LengthUnit.INCHES);
-        Length cm = new Length(2.54, Length.LengthUnit.CENTIMETERS);
-        Length inch1 = new Length(1.0, Length.LengthUnit.INCHES);
-
-        System.out.println("1 Yard equals 3 Feet: " + yard.equals(feet));
-        System.out.println("1 Yard equals 36 Inches: " + yard.equals(inch));
-        System.out.println("2.54 Centimeters equals 1 Inch: " + cm.equals(inch1));
+        System.out.println("2 Yards to Inches: " + Length.convert(2.0, Length.LengthUnit.YARDS, Length.LengthUnit.INCHES));
+        System.out.println("36 Inches to Yards: " + Length.convert(36.0, Length.LengthUnit.INCHES, Length.LengthUnit.YARDS));
+        System.out.println("1 Yard to Feet: " + Length.convert(1.0, Length.LengthUnit.YARDS, Length.LengthUnit.FEET));
+        System.out.println("2.54 Centimeters to Inches: " + Length.convert(2.54, Length.LengthUnit.CENTIMETERS, Length.LengthUnit.INCHES));
     }
 }

@@ -1,114 +1,85 @@
 package com.apps.quantitymeasurement;
 
 import org.junit.Test;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import com.apps.quantitymeasurement.QuantityMeasurementApp.Length;
 import com.apps.quantitymeasurement.QuantityMeasurementApp.Length.LengthUnit;
 
 public class QuantityMeasurementAppTest {
 
+    private static final double EPSILON = 1e-6;
+
     @Test
-    public void testFeetEquality() {
-        Length feet1 = new Length(5.0, LengthUnit.FEET);
-        Length feet2 = new Length(5.0, LengthUnit.FEET);
-        assertTrue(feet1.equals(feet2));
+    public void testConversion_FeetToInches() {
+        assertEquals(36.0, Length.convert(3.0, LengthUnit.FEET, LengthUnit.INCHES), EPSILON);
     }
 
     @Test
-    public void testInchesEquality() {
-        Length inches1 = new Length(5.0, LengthUnit.INCHES);
-        Length inches2 = new Length(5.0, LengthUnit.INCHES);
-        assertTrue(inches1.equals(inches2));
+    public void testConversion_InchesToFeet() {
+        assertEquals(3.0, Length.convert(36.0, LengthUnit.INCHES, LengthUnit.FEET), EPSILON);
     }
 
     @Test
-    public void testFeetInchesComparison() {
-        Length feet = new Length(1.0, LengthUnit.FEET);
-        Length inches = new Length(12.0, LengthUnit.INCHES);
-        assertTrue(feet.equals(inches));
+    public void testConversion_YardsToInches() {
+        assertEquals(72.0, Length.convert(2.0, LengthUnit.YARDS, LengthUnit.INCHES), EPSILON);
     }
 
     @Test
-    public void testFeetInequality() {
-        Length feet1 = new Length(5.0, LengthUnit.FEET);
-        Length feet2 = new Length(10.0, LengthUnit.FEET);
-        assertFalse(feet1.equals(feet2));
+    public void testConversion_InchesToYards() {
+        assertEquals(1.0, Length.convert(36.0, LengthUnit.INCHES, LengthUnit.YARDS), EPSILON);
     }
 
     @Test
-    public void testInchesInequality() {
-        Length inches1 = new Length(5.0, LengthUnit.INCHES);
-        Length inches2 = new Length(10.0, LengthUnit.INCHES);
-        assertFalse(inches1.equals(inches2));
+    public void testConversion_CentimetersToInches() {
+        assertEquals(1.0, Length.convert(2.54, LengthUnit.CENTIMETERS, LengthUnit.INCHES), 0.01);
     }
 
     @Test
-    public void testCrossUnitInequality() {
-        Length feet = new Length(1.0, LengthUnit.FEET);
-        Length inches = new Length(10.0, LengthUnit.INCHES);
-        assertFalse(feet.equals(inches));
+    public void testConversion_InchesToCentimeters() {
+        assertEquals(2.54, Length.convert(1.0, LengthUnit.INCHES, LengthUnit.CENTIMETERS), 0.01);
     }
 
     @Test
-    public void testMultipleFeetComparison() {
-        Length feet = new Length(3.0, LengthUnit.FEET);
-        Length inches = new Length(36.0, LengthUnit.INCHES);
-        assertTrue(feet.equals(inches));
+    public void testConversion_SameUnit() {
+        assertEquals(5.0, Length.convert(5.0, LengthUnit.FEET, LengthUnit.FEET), EPSILON);
+        assertEquals(10.0, Length.convert(10.0, LengthUnit.INCHES, LengthUnit.INCHES), EPSILON);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConversion_InvalidUnit_Throws_SourceNull() {
+        Length.convert(5.0, null, LengthUnit.INCHES);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConversion_InvalidUnit_Throws_TargetNull() {
+        Length.convert(5.0, LengthUnit.FEET, null);
     }
 
     @Test
-    public void yardEquals36Inches() {
-        Length yard = new Length(1.0, LengthUnit.YARDS);
-        Length inches = new Length(36.0, LengthUnit.INCHES);
-        assertTrue(yard.equals(inches));
+    public void testConversion_NaNOrInfinite_Throws_NaN() {
+        try {
+            Length.convert(Double.NaN, LengthUnit.FEET, LengthUnit.INCHES);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Value must be finite", e.getMessage());
+        }
     }
 
     @Test
-    public void yardEquals3Feet() {
-        Length yard = new Length(1.0, LengthUnit.YARDS);
-        Length feet = new Length(3.0, LengthUnit.FEET);
-        assertTrue(yard.equals(feet));
+    public void testConversion_NaNOrInfinite_Throws_PositiveInfinity() {
+        try {
+            Length.convert(Double.POSITIVE_INFINITY, LengthUnit.FEET, LengthUnit.INCHES);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Value must be finite", e.getMessage());
+        }
     }
 
     @Test
-    public void yardEquals1Yard() {
-        Length yard1 = new Length(1.0, LengthUnit.YARDS);
-        Length yard2 = new Length(1.0, LengthUnit.YARDS);
-        assertTrue(yard1.equals(yard2));
-    }
-
-    @Test
-    public void yardEqualsHalfYard() {
-        Length yard1 = new Length(1.0, LengthUnit.YARDS);
-        Length yard2 = new Length(0.5, LengthUnit.YARDS);
-        assertFalse(yard1.equals(yard2));
-    }
-
-    @Test
-    public void cmEquals1Inch() {
-        Length cm = new Length(2.54, LengthUnit.CENTIMETERS);
-        Length inch = new Length(1.0, LengthUnit.INCHES);
-        assertTrue(cm.equals(inch));
-    }
-
-    @Test
-    public void cmEquals1Feet() {
-        Length cm = new Length(30.48, LengthUnit.CENTIMETERS);
-        Length feet = new Length(1.0, LengthUnit.FEET);
-        assertTrue(cm.equals(feet));
-    }
-
-    @Test
-    public void testEquality_NullComparison() {
-        Length length = new Length(5.0, LengthUnit.FEET);
-        assertFalse(length.equals(null));
-    }
-
-    @Test
-    public void testEquality_DifferentClass() {
-        Length length = new Length(5.0, LengthUnit.FEET);
-        assertFalse(length.equals("5.0"));
+    public void testConversion_PrecisionTolerance() {
+        double result = Length.convert(10.0, LengthUnit.YARDS, LengthUnit.CENTIMETERS);
+        assertEquals(914.4, result, 0.01);
     }
 }
