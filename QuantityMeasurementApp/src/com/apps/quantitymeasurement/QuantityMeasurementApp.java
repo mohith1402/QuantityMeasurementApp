@@ -1,8 +1,8 @@
 /*
- * UC6: Addition of Two Length Units
+ * UC7: Addition with Target Unit Specification
  *
  * @author Mohith
- * @version 6.0
+ * @version 7.0
  */
 
 package com.apps.quantitymeasurement;
@@ -58,6 +58,15 @@ public class QuantityMeasurementApp {
             return new Length(this.value + otherConverted, this.unit);
         }
 
+        public Length add(Length other, LengthUnit targetUnit) {
+            if (other == null || targetUnit == null) {
+                throw new IllegalArgumentException("Arguments cannot be null");
+            }
+            double thisConverted = convert(this.value, this.unit, targetUnit);
+            double otherConverted = convert(other.value, other.unit, targetUnit);
+            return new Length(thisConverted + otherConverted, targetUnit);
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -76,24 +85,16 @@ public class QuantityMeasurementApp {
     }
 
     public static void main(String[] args) {
+        Length foot = new Length(1.0, Length.LengthUnit.FEET);
+        Length inches = new Length(12.0, Length.LengthUnit.INCHES);
+
+        Length sumInYards = foot.add(inches, Length.LengthUnit.YARDS);
+        System.out.println("1 Foot + 12 Inches in Yards = " + sumInYards.getValue() + " " + sumInYards.getUnit());
+
         Length inch1 = new Length(2.0, Length.LengthUnit.INCHES);
-        Length inch2 = new Length(2.0, Length.LengthUnit.INCHES);
-        Length sum1 = inch1.add(inch2);
-        System.out.println("2 Inches + 2 Inches = " + sum1.getValue() + " " + sum1.getUnit());
-
-        Length foot1 = new Length(1.0, Length.LengthUnit.FEET);
-        Length inch3 = new Length(2.0, Length.LengthUnit.INCHES);
-        Length sum2 = inch3.add(foot1);
-        System.out.println("2 Inches + 1 Foot = " + sum2.getValue() + " " + sum2.getUnit());
-
-        Length foot2 = new Length(1.0, Length.LengthUnit.FEET);
-        Length foot3 = new Length(1.0, Length.LengthUnit.FEET);
-        Length sum3 = foot2.add(foot3);
-        System.out.println("1 Foot + 1 Foot = " + sum3.getValue() + " " + sum3.getUnit());
-
-        Length inch4 = new Length(2.0, Length.LengthUnit.INCHES);
         Length cm1 = new Length(2.54, Length.LengthUnit.CENTIMETERS);
-        Length sum4 = inch4.add(cm1);
-        System.out.println("2 Inches + 2.54 Centimeters = " + sum4.getValue() + " " + sum4.getUnit());
+
+        Length sumInInches = inch1.add(cm1, Length.LengthUnit.INCHES);
+        System.out.println("2 Inches + 2.54 Centimeters in Inches = " + sumInInches.getValue() + " " + sumInInches.getUnit());
     }
 }
