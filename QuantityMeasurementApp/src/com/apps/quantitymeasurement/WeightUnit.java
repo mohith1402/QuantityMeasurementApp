@@ -19,7 +19,7 @@ public enum WeightUnit implements IMeasurable<WeightUnit> {
     @Override
     public double convertToBaseUnit(double value) {
         if (!Double.isFinite(value)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Value must be finite");
         }
         return value * this.conversionFactor;
     }
@@ -27,7 +27,7 @@ public enum WeightUnit implements IMeasurable<WeightUnit> {
     @Override
     public double convertFromBaseUnit(double baseValue) {
         if (!Double.isFinite(baseValue)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Base value must be finite");
         }
         return baseValue / this.conversionFactor;
     }
