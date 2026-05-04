@@ -10,96 +10,62 @@ public class QuantityMeasurementAppTest {
     private static final double EPSILON = 1e-2;
 
     @Test
-    public void testAddition_WithTargetUnit_FeetAndInchesToYards() {
-        Length foot = new Length(1.0, LengthUnit.FEET);
-        Length inches = new Length(12.0, LengthUnit.INCHES);
-        Length result = foot.add(inches, LengthUnit.YARDS);
-
-        assertEquals(0.666, result.getValue(), EPSILON);
-        assertEquals(LengthUnit.YARDS, result.getUnit());
+    public void testLengthEquality_SameUnit() {
+        Quantity<LengthUnit> feet1 = new Quantity<>(5.0, LengthUnit.FEET);
+        Quantity<LengthUnit> feet2 = new Quantity<>(5.0, LengthUnit.FEET);
+        assertTrue(feet1.equals(feet2));
     }
 
     @Test
-    public void testAddition_WithTargetUnit_InchesAndCentimetersToInches() {
-        Length inches = new Length(2.0, LengthUnit.INCHES);
-        Length cm = new Length(2.54, LengthUnit.CENTIMETERS);
-        Length result = inches.add(cm, LengthUnit.INCHES);
-
-        assertEquals(3.0, result.getValue(), EPSILON);
-        assertEquals(LengthUnit.INCHES, result.getUnit());
+    public void testLengthEquality_DifferentUnit() {
+        Quantity<LengthUnit> feet = new Quantity<>(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> inches = new Quantity<>(12.0, LengthUnit.INCHES);
+        assertTrue(feet.equals(inches));
     }
 
     @Test
-    public void testAddition_WithTargetUnit_YardsAndFeetToFeet() {
-        Length yard = new Length(1.0, LengthUnit.YARDS);
-        Length feet = new Length(2.0, LengthUnit.FEET);
-        Length result = yard.add(feet, LengthUnit.FEET);
-
-        assertEquals(5.0, result.getValue(), EPSILON);
-        assertEquals(LengthUnit.FEET, result.getUnit());
+    public void testWeightEquality_SameUnit() {
+        Quantity<WeightUnit> kg1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        Quantity<WeightUnit> kg2 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        assertTrue(kg1.equals(kg2));
     }
 
     @Test
-    public void testAddition_WithTargetUnit_YardsAndYardsToCentimeters() {
-        Length yard1 = new Length(1.0, LengthUnit.YARDS);
-        Length yard2 = new Length(1.0, LengthUnit.YARDS);
-        Length result = yard1.add(yard2, LengthUnit.CENTIMETERS);
-
-        assertEquals(182.88, result.getValue(), EPSILON);
-        assertEquals(LengthUnit.CENTIMETERS, result.getUnit());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testAddition_WithTargetUnit_NullLength_Throws() {
-        Length length = new Length(2.0, LengthUnit.INCHES);
-        length.add(null, LengthUnit.FEET);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testAddition_WithTargetUnit_NullTargetUnit_Throws() {
-        Length length1 = new Length(2.0, LengthUnit.INCHES);
-        Length length2 = new Length(2.0, LengthUnit.INCHES);
-        length1.add(length2, null);
+    public void testWeightEquality_DifferentUnit() {
+        Quantity<WeightUnit> kg = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        Quantity<WeightUnit> grams = new Quantity<>(1000.0, WeightUnit.GRAM);
+        assertTrue(kg.equals(grams));
     }
 
     @Test
-    public void testAddition_InchesToInches() {
-        Length length1 = new Length(2.0, LengthUnit.INCHES);
-        Length length2 = new Length(2.0, LengthUnit.INCHES);
-        Length result = length1.add(length2);
+    public void testCrossCategoryInequality() {
+        Quantity<LengthUnit> feet = new Quantity<>(1.0, LengthUnit.FEET);
+        Quantity<WeightUnit> kg = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        assertFalse(feet.equals(kg));
+    }
+
+    @Test
+    public void testLengthAddition() {
+        Quantity<LengthUnit> inches1 = new Quantity<>(2.0, LengthUnit.INCHES);
+        Quantity<LengthUnit> inches2 = new Quantity<>(2.0, LengthUnit.INCHES);
+        Quantity<LengthUnit> result = inches1.add(inches2);
 
         assertEquals(4.0, result.getValue(), EPSILON);
         assertEquals(LengthUnit.INCHES, result.getUnit());
     }
 
     @Test
-    public void testAddition_FeetToInches() {
-        Length length1 = new Length(1.0, LengthUnit.FEET);
-        Length length2 = new Length(2.0, LengthUnit.INCHES);
-        Length result = length1.add(length2);
+    public void testWeightAddition_WithTargetUnit() {
+        Quantity<WeightUnit> kg = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        Quantity<WeightUnit> grams = new Quantity<>(1000.0, WeightUnit.GRAM);
+        Quantity<WeightUnit> result = kg.add(grams, WeightUnit.GRAM);
 
-        assertEquals(1.166666, result.getValue(), EPSILON);
-        assertEquals(LengthUnit.FEET, result.getUnit());
+        assertEquals(2000.0, result.getValue(), EPSILON);
+        assertEquals(WeightUnit.GRAM, result.getUnit());
     }
 
-    @Test
-    public void testFeetEquality() {
-        Length feet1 = new Length(5.0, LengthUnit.FEET);
-        Length feet2 = new Length(5.0, LengthUnit.FEET);
-        assertTrue(feet1.equals(feet2));
-    }
-
-    @Test
-    public void testFeetInchesComparison() {
-        Length feet = new Length(1.0, LengthUnit.FEET);
-        Length inches = new Length(12.0, LengthUnit.INCHES);
-        assertTrue(feet.equals(inches));
-    }
-
-    @Test
-    public void testCrossUnitInequality() {
-        Length feet = new Length(1.0, LengthUnit.FEET);
-        Length inches = new Length(10.0, LengthUnit.INCHES);
-        assertFalse(feet.equals(inches));
+    @Test(expected = IllegalArgumentException.class)
+    public void testQuantity_NullUnit_ThrowsException() {
+        new Quantity<>(1.0, null);
     }
 }

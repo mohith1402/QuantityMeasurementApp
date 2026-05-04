@@ -1,3 +1,10 @@
+/*
+ * UC10: Generic Quantity Class with Unit Interface for Multi-Category Support
+ *
+ * @author Mohith
+ * @version 10.0
+ */
+
 package com.apps.quantitymeasurement;
 
 public class Quantity<U extends Enum<U> & IMeasurable<U>> {
@@ -69,5 +76,10 @@ public class Quantity<U extends Enum<U> & IMeasurable<U>> {
         double otherBase = typedOther.unit.convertToBaseUnit(typedOther.value);
 
         return Math.abs(thisBase - otherBase) <= 0.01;
+    }
+
+    @Override
+    public String toString() {
+        return value + " " + unit;
     }
 }
